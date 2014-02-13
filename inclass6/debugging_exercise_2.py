@@ -9,7 +9,8 @@ def factorial(n):
     """ Computes the factorial of the non-negative input integer n """
     return_val = 1
     for i in range(n):
-        return_val *= i
+        return_val *= i+1
+        assert(return_val >=1)
     return return_val
 
 if __name__ == '__main__':

@@ -13,7 +13,8 @@ def cumulative_sum(L):
 	L: the original list
 	returns: a new list where element i is equal to the sum of element
 		 0 through i in the original list """
-    for i in range(len(L)):
+    for i in range(1,len(L)):
+        print "In loop value of i is" +str(i)
         L[i] = L[i-1] + L[i]
     return L
 
