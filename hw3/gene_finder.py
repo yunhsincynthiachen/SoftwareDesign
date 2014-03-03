@@ -39,6 +39,9 @@ def coding_strand_to_AA(dna):
     for a in range(len(dnasequence)):
         start = 3*a #to start at 0 when a is 0, 3 when a is 1,...
         stop = 3*a + 3 #to stop at 3 when a is 0, 6 when a is 2...
+        					# For situations like this, consider using the third argument of the range()
+        					# function which is an incrementer. EG "for a in range (0,len(dnasequence),3):"
+        					# will incrememnt a by 3 each time through
         dnagroup = dna[start:stop] #the codon sequence we want to pass in the for loop each time
         for b in range(0, len(aa)): #the range in which the codons can be found in the amino_acids script
             if dnagroup in codons[b]: #searches for the place where the codons are 
@@ -46,7 +49,16 @@ def coding_strand_to_AA(dna):
     
     # next we need to return the actual amino acid in a string form
     return ''.join(aminoacids_sequence)
+
+    # While typically commenting more is better than commenting less, you could ease off the comments
+    # a bit - typically they are most useful to explain hard to understand lines of code or once every
+    # few lines to orient your reader to what you're doing. This is indeed very easy for me to read,
+    # but it takes more of your time than would be necessary to provide adequate documentation.
+
     
+# Stylistically, it would make sense to make just one of these 
+# if __name__ blocks at the bottom of your script and run all your commands there
+# rather than make a seperate if statement after each function
 if __name__=='__main__':
     print coding_strand_to_AA()
 
@@ -89,6 +101,8 @@ def get_reverse_complement(dna):
         # bases. So I got help with that part, and found out I need to append all of them 
     return ''.join(reverse_complement)[::-1] # joins all of the complements into a string and then reverses the sequence
 
+    #Good use of substringing!
+
 if __name__=='__main__':
     print get_reverse_complement()
     
@@ -123,19 +137,36 @@ def rest_of_ORF(dna):
     stop2 = -1 # accounts for the fact that we want only the start codon if there is no stop codon at all
 
     for a in range(len(dnaseq)/3):# indicates the step size as each group of three
+    								#Another good time to use the range() function's incrementer
         start = 3*a # starting location
         stop = 3*a + 3 #stopping location
         dnathree = dna[start:stop] # entire start to stop
         dnalist.append(dnathree) # adds the next group of three into a list of all groups of three
         for b in range(len(stop_codon)): # b in range of how many stop_codons is 1 (only one object)
             if dnalist[a] in stop_codon[b]: # if any of the groups of three matches a stop codon, it will look for where
+            									# This syntax is a bit awkward as the in keyword returns true if the element before
+            									# it is anywhere in the list after it. Because of how this works, the for loop is unnecessary
+            									# and the if can be rewritten as "if dnalist[a] in stop_codon:". 
                 stop2 = dnalist.index(stop_codon[b]) 
                 ORF_rest = dnalist[:stop2] # it will create a list of the start to stop codons
+                								# If you are going to write your code with this break statment and "stop2" that gets passed
+                								# on, but you only care if a stop has occured or not, it would be easier to just write "stop2=True"
+                								# which later allows you to shorten "if stop2 == -1:" to just "if stop2:"
                 break
         if stop2 == -1: # in case that there is no stop, the function will just output all the codons
             ORF_rest = dnalist[:]
 
+            #One suggestion to make this structure more succinct is that you could write a return statement instead of a break
+            #statement in your first if statement above. Then, if your code ever reachs the end of the if statment, you already know
+            #that it is at the end of your dna strand and your return statement will automatically return the entire thing.
+
     return ''.join(ORF_rest) # joins all the codons into one ORF
+
+
+    #So I wrote a great number of comments here and I'd be happy to go over them with you whenever you have a few minutes. The
+    #summary is that this function is a bit long and convoluted compared to other options which would work equally well. I'd like
+    #to make sure you understand the comments though so that you can save time and increase your code's clarity on future assignments
+
     
 if __name__=='__main__':
     print rest_of_ORF()
@@ -166,6 +197,12 @@ def find_all_ORFs_oneframe(dna):
         dna: a DNA sequence
         returns: a list of non-nested ORFs
     """
+
+    #This function is bugged! My unit tests are outputting this:
+    #input: ATGCATGAATGTAGATAGATGTGCCC, expected output: ['ATGCATGAATGTAGA', 'ATGTGCCC'] , actual output: ['ATGCATGAATGTAGA', 'ATGTGC']
+	#input: ATGTGCATGAGATAGGATGGGATGCTTG, expected output: ['ATGTGCATGAGA', 'ATGCTTG'], actual output: ['ATGTGCATGAGA', 'ATGCTT']
+	#These imply that your code is returning up to the last complete codon, but nothing after that.
+
     dnalists = [] # where the groups of three codons will be put
     i = 0 # while loop starting position
     
@@ -173,6 +210,8 @@ def find_all_ORFs_oneframe(dna):
         start = 3*i # start at 0 when i is 0, start at 3 when i is 1
         stop = 3*i + 3 # stop at 3 when i is 0, stop at 6 when i is 1 
         dnagroups = dna[start:stop] # creates each of the groups of three into one
+        								# I believe this grouping process is responsible for your bug because it is ignoring partial groups
+        								# that occur at the end of your dna string
         if dnagroups == 'ATG': # sees if it is a start codon
             dnalists.append(rest_of_ORF(dna[start:])) # if it is, it will add on the dnagroup into the list
             i = i + len(dnalists[len(dnalists)-1])/3 # finds where to look next: where the start codon was found minus one location of where that previous ATG was found, divided by groups of three to find the codon number
@@ -203,15 +242,23 @@ def find_all_ORFs(dna):
         dna: a DNA sequence
         returns: a list of non-nested ORFs
     """
+
+    #This is and also find_all_ORFs_both_strands are bugged as well as the above as a result of the earlier bug cascading through
+    #these functions. Don't worry though, since its the same bug, it only is counted for grading purposes once.
+
     all_ORFs = []
     
     for i in range (3): # will change the i value of each step
         strand = dna[i:] # indicate the new dna strand will start at the index of dna that corresponds to the number
         if not find_all_ORFs_oneframe(strand) == []: # finds if there are ORFs in the strand to continue adding it as a string into the list
+        												# Hmm, this check probably isn't necessary, but its never a bad idea to check things like
+        												# this. Well done.
             all_ORFs.extend(find_all_ORFs_oneframe(strand))
         
     
     return all_ORFs
+
+    	# Nice style in this function. It is compact and easily understood.
 
 def find_all_ORFs_unit_tests():
     """ Unit tests for the find_all_ORFs function """
@@ -239,6 +286,10 @@ def find_all_ORFs_both_strands(dna):
     both_strands.extend(find_all_ORFs(get_reverse_complement(dna))) # looks for the reverse complements of the dna
         
     return both_strands
+
+    # Yep, this is fine. You can also concatinate lists with the + operator so this function could be simplified down
+    # to the one-liner "return find_all_ORFs(dna) + find_all_ORFs(get_reverse_complement(dna))" but this is largely
+    # a matter of preference
         
         
 
@@ -263,6 +314,7 @@ def longest_ORF(dna):
         return ''
     else: # searches for the maximum ORF of the list depending on the lengths of each ORF
         return max(mylist, key =len)
+        #Good use of max and of return statements within your if statements.
 
 def longest_ORF_unit_tests():
     """ Unit tests for the longest_ORF function """
@@ -294,6 +346,9 @@ def longest_ORF_noncoding(dna, num_trials):
         if len(orf)>ORF_Longest_Len: # will see if the length of the longest ORF is greater than 0 in the first cycle, greater than what was the longest ORF in the previous cycle
             ORF_Longest_Len = len(orf) # replaces the longest ORF len variable with the new length
             ORF_Long = orf # gives the sequence of the longer orf
+
+            # This is another place you could use max if you so choose (you'd just do it to the list after the for loop runs).
+            # Once again, it is a matter of preference.
     
     return len(ORF_Long)/3 # returns the location of the newest longer orf
 
