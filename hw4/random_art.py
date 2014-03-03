@@ -2,7 +2,7 @@
 """
 Created on Tue Feb 11 11:34:57 2014
 
-@author: pruvolo
+@author: yunhsincynthiachen
 """
 
 # you do not have to use these particular modules, but they may help
@@ -64,18 +64,18 @@ def make_art():
     # that will be created into integers that create red, green and blue colors that will be 
     # taken into as pixels
     
-    r = build_random_function(1,4)
-    g = build_random_function(3,10)
-    b = build_random_function(4,8)
+    r = build_random_function(4,7)
+    g = build_random_function(3,12)
+    b = build_random_function(5,9)
 
     
-    im = Image.new("RGB",(350,350))
+    im = Image.new("RGB",(1600,900))
     pix = im.load() 
     
-    for x in range(349):
-        for y in range(349):
-            xscale = (x/(349/2.0))- 1
-            yscale = (y/(349/2.0))- 1
+    for x in range(1600):
+        for y in range(900):
+            xscale = (x/(1600/2.0))- 1
+            yscale = (y/(900/2.0))- 1
             red = evaluate_random_function(r,xscale,yscale)
             green = evaluate_random_function(g,xscale,yscale)
             blue = evaluate_random_function(b,xscale,yscale)
@@ -86,7 +86,7 @@ def make_art():
             greenn = int(greenscale)
             bluee = int(bluescale)
             pix[x,y] = (redd,greenn,bluee)
-    im.save('awesomepic9.png')
+    im.save('awesomepic10.png')
     im.show()
 
 if __name__ == '__main__':

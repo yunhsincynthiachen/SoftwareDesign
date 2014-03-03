@@ -1,0 +1,1 @@
+This is Cynthia Chen's and Zoher Ghadyali's repository for Olin College's Software Design Linguistics Assignment. Our goal is to create an Oscar Predictor, using Python's Pattern module. Pattern uses Twitter's API to mine for tweets related to Oscar predictions and we then use sentiment analysis to predict who will win a variety of categories in the Oscars 2014.
