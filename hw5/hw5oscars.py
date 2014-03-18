@@ -29,9 +29,18 @@ oscarmovies = {'\"12 years a slave\"':'\"oscars\"will\"win',
                
 om = oscarmovies    #initializes a dictionary that we can use to search through Twitter for
 
+	# I'll mention up here that you have done a beautiful job in terms of formatting here - your code
+	# looks very clean and nice and is easy to read. You also did a very good job at breaking everything
+	# down into small, modular functions, so kudos on that. I will mention, and Paul hasn't really talked about this
+	# that much yet, but when you have a project this large it often makes sense to put groups of
+	# associated functions in seperate scripts that are imported by your main script.
+
 def oscarmoviestwittersearch():
     """ This function, which we only run once, produces a set of tweets that we can work with in a plaintext
     file. The output of this function is a file containing all of our tweets, separated by /n """
+    	# This is a wonderfully helpful docstring, but the critical thing that you are missing in all of these
+    	# is that a docstring should always specify what arguments it takes and what it returns. Be sure to
+    	# do that in future
     L = []
     L2 = []
     t = Twitter()
@@ -41,6 +50,8 @@ def oscarmoviestwittersearch():
             L2.append(sentiment(tweet.text))
 
     file = open('bestoscarmovietweets.txt','w') #opens a new file, writes all of our tweets to this file, and closes file
+    # Be careful with this - file is a python type, and you don't want to use types or other keywords as variable names. It worked
+    # out alright for you here, but avoid this in future.
     for i in L:
         file.write(str(i)+'\n')
     file.close()
@@ -48,6 +59,8 @@ def oscarmoviestwittersearch():
 def openbestoscarmoviefiletweets():
     """ This function opens the plaintext file and outputs it as a varaible that can be called"""
     with open('bestoscarmovietweets.txt','r') as myfile:
+    	# Good use of the with statement!
+    	# Honestly, if you know how to use it I'm not sure why you didn't in the last function.
         data = myfile.readlines()
     return data
     
@@ -113,8 +126,15 @@ if __name__ == "__main__":
             index_her.append(i)
         if 'philomena' in lower_case_list[i]:
             index_philomena.append(i)
-    
+
     #we chose to do this outside of a function so that we have access to all of these lists individually, without appending them all into one huge list
+
+    # Why? - instead of storing individual lists for each movie, you might have been able to make each movie's index list part of
+    # a list and run functions on each element of that overall list. You can store lists in lists. Yes, it would mean that each movie's name then
+    # is just an index in that list, but you could unpack the movies' lists at the end and reassociate their names with the data that you have crunched.
+    # In fact, it looks like you are already effectively doing that with the labels at the end.
+    # It would save you a fair amount of typing. Certainly, if you'd been dealing with more movies a solution like this would be worthwhile.
+    # Also functionalizing parts of this may have saved you some code when running best actor and made your overall code much more compact.
     
     sent_12yearsaslave = finding_sentiment_analysis(index_12yearsaslave, lower_case_list)
     sent_wolfofwallstreet = finding_sentiment_analysis(index_wolf, lower_case_list)
@@ -169,6 +189,9 @@ ba = bestactor
 def bestactortwittersearch():
     """ This function, which we only run once, produces a set of tweets that we can work with in a plaintext
     file. The output of this function is a file containing all of our tweets, separated by /n """
+    # This seems redundant with your oscar movie twitter search function - you could take in a different
+    # list (om or ba) and a filename to write, and then just use the exact same file twice. This is the point
+    # of making your functions modular, and its already perfectly set up except for those two particular arguments.
     L3 = []
     L4 = []
     t = Twitter()
@@ -184,6 +207,10 @@ def bestactortwittersearch():
 
 def openbestactorfiletweets():
     """ This function opens the plaintext file and outputs it as a varaible that can be called"""
+    # Woah! This is definately the same function as above with a different name, just like above. For all of the functions in this
+    # section you're doing exactly what functions are designed to allow you not to do: repeating yourself! Save yourself some work
+    # and use modular functions to take in the one or two arguments here that need to change between the functions. That's why we
+    # use functions!
     with open('bestactortweets.txt','r') as myfile2:
         data2 = myfile2.readlines()
     return data2
