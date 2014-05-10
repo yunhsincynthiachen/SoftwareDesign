@@ -23,7 +23,7 @@ class GravityModel:
         self.collided = False
         self.wincollide = False
         
-        for i in range(640/190):
+        for i in range(640/190):    # Why is this 640 hardcoded instead of using the screen width?
             """ Next, we neeed to create a for loop that will add space junks to the spacejunk list that will be updated """
             for j in range(240/95):              
                 new_b = SpaceJunkM(random.randint(60,640),random.randint(60,480), (random.randint(1,2)), (random.randint(1,2)),random.randint(20,40),random.randint(20,40), (random.randint(50,255),0,0))
@@ -47,6 +47,14 @@ class GravityModel:
 class SpaceJunkM:
     """ Encodes the state of a moving space junk """
     def __init__(self,x,y,vx,vy,width,height,color):
+
+        # Just a thought,but if these are always initilized as random, you could do the 
+        # random number generation here instead of accepting this many parameters. Its
+        # a stylistic decision though. One way to have the best of both worlds is to initilize
+        # them in the parameter list as None (EG. x=None, y=None, and so on) and then check
+        # them to see if they are None (IE. have not been set by the calling function/class)
+        # and then set them to random if they are still None.
+
         self.x = x
         self.y = y
         self.width = width
@@ -136,6 +144,10 @@ class Sandra:
     def sandra_collide(self,junk):
         """ this function checks to see if the object Sandra collides with the space junks (specifically checking for overlapping
          positions) """
+
+        # Nothing terribly wrong with this approach, but pygame has a built in collider class
+        # which probably provides teh functionality you are putting in here.
+
         if self.x < junk.x < (self.x + junk.width) and self.y < junk.y < (self.y+ junk.height): #checks for overlapping positions
             return True
         else:
@@ -144,6 +156,12 @@ class Sandra:
     def sandra_win(self):
         """ this function checks to see if the object Sandra collides with the spaceship on the opposite side (the corner with 
         the red space ship) """
+    
+        # This could be improved by not hardcoding these numbers. Instead, you could have a variable spaceship_location
+        # that was set by the initilization of the spaceship. This is an improvement because otherwise, if you ever
+        # change the goal (spaceship) location, you have to find this point in the code and change it too. In general
+        # try to avoid this, and you will save many a debugging and refactoring headache
+
         if self.x >= 560 and self.y >= 360: #checks for overlapping positions of sandra and the spaceship location
             return True
         else:
